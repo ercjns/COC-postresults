@@ -1,0 +1,41 @@
+
+div.classresults {
+	padding-top: 40px;
+}
+table {
+	border-collapse: collapse;
+	width: auto;
+}
+table.fullwidth {
+    width: 100%;
+}
+th {
+	background-color:#076304;
+	color:#FFFFFF;
+	padding: 5px 8px;
+	text-align: left;
+}
+td {
+	border: 1px solid #CCC;
+	padding: 2px 8px;
+}
+td.team {
+	padding-top: 10px;
+	border-style: none none solid none;
+}
+td.member {
+	color: #777;
+}
+td.noborder {
+	border-style: none;
+}
+td.vborder {
+	border-style: none solid;
+}
+td.fixright {
+	text-align: right;
+	font-family: Courier, monospace;
+}
+td.thin {
+	width: 45px;
+}
