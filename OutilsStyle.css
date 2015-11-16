@@ -1,5 +1,5 @@
 
-div.classresults {
+div.classResults {
 	padding-top: 40px;
 }
 table {
@@ -38,4 +38,7 @@ td.fixright {
 }
 td.thin {
 	width: 45px;
+}
+td.xthin {
+	width: 30px;
 }

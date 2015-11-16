@@ -1,5 +1,3 @@
-import OutilsClubCodes as OCC
-
 def _fileContents(filename):
     with open(filename, 'r') as fn:
         contents = fn.read()
@@ -64,7 +62,6 @@ def _getTopContent(urls={}, opts={}):
 
 def writeIndividualHTML(runners, urls, filename="results-individuals.html", opts={'WIOL':False}):
     """Save HTML to filename than can be pasted into COC results website."""
-    clubdict = OCC.ClubCodes('ClubCodes.csv')
     COCcclasses = ['1', '3', '7', '8F', '8M', '8G', 'W1F', 'W1M', 'W2F', 'W2M',
                    'W3F', 'W4M', 'W5M', 'W6F', 'W6M']
     if opts['WIOL']:
@@ -154,7 +151,7 @@ def writeIndividualHTML(runners, urls, filename="results-individuals.html", opts
                         fn.write('<tr>\n')
                         fn.write('<td>' + '</td>\n') # blank place
                         fn.write('<td>' + r.name + '</td>\n')
-                        fn.write('<td>' + clubdict.getClubFull(r.club) + '</td>\n')
+                        fn.write('<td>' + r.clubfull + '</td>\n')
                         fn.write('<td class="fixright">' + statuscode + '</td>\n')
                         if points:
                             fn.write('<td class="fixright thin">' + str(r.score) + '</td>\n')
@@ -217,7 +214,7 @@ def writeTeamHTML(teams, urls, filename="results-teams.html"):
     
     return
     
-def writeSeasonIndivHTML(seasonindvs, urls, filename='season-ind.html'):
+def writeSeasonIndivHTML(seasonindvs, urls, filename='season-ind.html', opts={'WIOL':False}):
     # TODO: Options for handling Winter O in addition to WIOL
     COCclassnames = {
                 '1': 'Beginner',
@@ -230,24 +227,29 @@ def writeSeasonIndivHTML(seasonindvs, urls, filename='season-ind.html'):
                 'W1M': 'Elementary School Boys',
                 'W2F': 'Middle School Girls',
                 'W2M': 'Middle School Boys',
+                'W2':  'Middle School',
                 'W3F': 'High School JV Girls',
                 'W4M': 'High School JV Boys North',
                 'W5M': 'High School JV Boys South',
                 'W6F': 'High School Varsity Girls',
                 'W6M': 'High School Varsity Boys'
                 }
-    
     with open(filename, 'w') as fn:
         # includes
         fn.write('<style>' + _fileContents('OutilsStyle.css') + '</style>\n')
         
         # header content
-        fn.write(_getTopContent(urls, {'pagetype':'WIOLiSeason'}))
+        if opts['WIOL']:
+            fn.write(_getTopContent(urls, {'pagetype':'WIOLiSeason'}))
         
         # results content
         for cclass in sorted(seasonindvs.keys()):
-            if cclass in ['8M', '8F']:
-                continue
+            if opts['WIOL']:
+                if cclass in ['8M', '8F']:
+                    continue
+            elif not opts['WIOL']:
+                if cclass not in ['8M', '8F']:
+                    continue
             fn.write('<div class="classResults" id="' + cclass + '">\n')
             fn.write('<a name="' + cclass + '"></a>\n')
             fn.write('<h3>' + COCclassnames[cclass] + '</h3>')
@@ -256,15 +258,63 @@ def writeSeasonIndivHTML(seasonindvs, urls, filename='season-ind.html'):
             fn.write('<th>Name</th><th>#1</th><th>#2</th><th>#3</th><th>#4</th><th>#5</th><th>#6</th><th>#7</th><th>Season</th>')
             fn.write('</tr>\n')
             
+            # TODO order by posoition rather than by points
+            # TODO order runners by points
+            
             for runner in seasonindvs[cclass]:
                 fn.write('<tr>')
-                fn.write('<td>' + runner.name + '</td>')
+                fn.write('<td>' + runner.name + ' (' + runner.club +')' + '</td>')
                 for meet in ['WIOL1', 'WIOL2', 'WIOL3', 'WIOL4', 'WIOL5', 'WIOL6', 'WIOL7']:
                     try:
-                        fn.write('<td class="fixright thin">' + str(runner.scores[meet]) + '</td>')
+                        fn.write('<td class="fixright xthin">' + str(runner.scores[meet]) + '</td>')
                     except KeyError:
-                        fn.write('<td class="fixright thin"> -- </td>')
+                        fn.write('<td class="fixright xthin"> -- </td>')
                 fn.write('<td class="fixright thin">' + str(runner.score) + '</td>')
+                fn.write('</tr>')
+            fn.write('</table></div>')
+                        
+    return
+    
+def writeSeasonTeamsHTML(seasonteams, urls, filename='season-team.html'):
+    WIOLteamclassnames = {'W2': 'Middle School Teams',
+                          'W3F': 'High School JV Girls Teams',
+                          'W4M': 'High School JV Boys North Teams',
+                          'W5M': 'High School JV Boys South Teams',
+                          'W6F': 'High School Varsity Girls Teams',
+                          'W6M': 'High School Varsity Boys Teams'
+                         }
+                         
+    
+    with open(filename, 'w') as fn:
+        # includes
+        fn.write('<style>' + _fileContents('OutilsStyle.css') + '</style>\n')
+        
+        # header content
+        fn.write(_getTopContent(urls, {'pagetype':'WIOLtSeason'}))
+        
+        # results content
+        for cclass in sorted(seasonteams.keys()):
+            fn.write('<div class="classResults" id="' + cclass + '">\n')
+            fn.write('<a name="' + cclass + '"></a>\n')
+            fn.write('<h3>' + WIOLteamclassnames[cclass] + '</h3>')
+            fn.write('<table class="fullwidth">\n')
+            fn.write('<tr>\n')
+            fn.write('<th>School</th><th>#1</th><th>#2</th><th>#3</th><th>#4</th><th>#5</th><th>#6</th><th>#7</th><th>Season</th>')
+            fn.write('</tr>\n')
+            
+            # TODO order by place rather than by points
+            # TODO order teams by points
+            seasonteams[cclass].sort(key=lambda x: -x.score)
+            
+            for team in seasonteams[cclass]:
+                fn.write('<tr>')
+                fn.write('<td>' + team.clubfull + ' (' + team.club + ')' + '</td>')
+                for meet in ['WIOL1', 'WIOL2', 'WIOL3', 'WIOL4', 'WIOL5', 'WIOL6', 'WIOL7']:
+                    try:
+                        fn.write('<td class="fixright xthin">' + str(team.scores[meet]) + '</td>')
+                    except KeyError:
+                        fn.write('<td class="fixright xthin"> -- </td>')
+                fn.write('<td class="fixright thin">' + str(team.score) + '</td>')
                 fn.write('</tr>')
             fn.write('</table></div>')
                         
