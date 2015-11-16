@@ -38,23 +38,23 @@ class Runner(object):
         
 class WIOLTeam(object):
     """
-    Represents a team of individuals in a WIOL team class
+    Represents a team of individuals in a WIOL team class at a single meet
     """
     def __init__(self, club, clubfull, cclass, runners, finishers, scorers, score):
         """init."""
         self.club = club
         self.clubfull = clubfull
         self.cclass = cclass
-        self.runners = runners
-        self.finishers = finishers
-        self.scorers = scorers
+        self.runners = runners # list of Runner objects
+        self.finishers = finishers # list, subset of runners
+        self.scorers = scorers # list, subset of finishers
         self.score = score
         self.position = None
         return
 
 class SeasonResult(object):
     """
-    Represents a result for an individual or team over the season.
+    Represents a result for an individual over the season.
     """
     def __init__(self, name, club, clubfull):
         self.name = name
@@ -77,7 +77,37 @@ class SeasonResult(object):
         self.score = seasonscore
         return
     
+    # verb: insert
     def addResult(self, meet, score):
+        self.scores[meet] = score
+        self._calcSeasonScore()
+        return
+        
+class TeamSeasonResult(object):
+    """
+    Represents a result for team over the season.
+    """
+    def __init__(self, club, clubfull):
+        self.club = club
+        self.clubfull = clubfull
+        self.scores = {}
+        self.score = 0
+        self.position = None
+        return
+        
+    def _calcSeasonScore(self):
+        seasonscore = 0
+        scorelist = self.scores.values()
+        scorelist.sort(key=lambda x: -x)
+        for i in range(4):
+            try:
+                seasonscore += scorelist[i]
+            except:
+                break
+        self.score = seasonscore
+        return
+
+    def insertResult(self, meet, score):
         self.scores[meet] = score
         self._calcSeasonScore()
         return
@@ -511,15 +541,21 @@ def createSeasonResults(meetdata):
     # meetdata is a dict, key = 'WIOL1', value dict 'indv' & 'teams' map to list of objects
     seasonindvs = {}
     seasonteams = {}
+    
+    
     for meet, results in meetdata.items():
+        # season individuals:
         for runner in results['indv']:
+            # print 'class', runner.cclass
             recorded = False
             if runner.cclass in ['1','3','7','8G']:
                 continue # skip public classes
-            if runner.status in ['NotCompeting', 'Disqualified']:
-                continue # skip NC and DQ, but MSP and DNF get 0s so they stay.
+            if runner.status in ['NotCompeting']:
+                continue # skip NC, but MSP, DSQ and DNF get 0s so they stay.
                 
             seasonclass = seasonindvs.setdefault(runner.cclass, [])
+            # print 'individuals in class', seasonclass
+            # TODO refactor - ALWAYS inserting a new result
             for seasonperson in seasonclass:
                 if (seasonperson.name == runner.name) and (seasonperson.club == runner.club):
                     # match, add to results
@@ -528,11 +564,28 @@ def createSeasonResults(meetdata):
                     break
             if not recorded:
                 # no match found, add a new season result in the class for this runner.
-                sp = SeasonResult(runner.name, runner.club, runner.club)
+                sp = SeasonResult(runner.name, runner.club, runner.clubfull)
                 sp.addResult(meet, runner.score)
                 seasonclass.append(sp)
-                recorded = True
+                recorded = True # this is not needed?
         
-        # TODO: season teams in a similar fashion.
+        # season teams
+        for team in results['teams']:
+            recorded = False
+            seasonteamresults = seasonteams.setdefault(team.cclass, []) #this is a table in the results output
+            
+            st = None
+            for seasonteam in seasonteamresults:
+                # TODO can we grab it with an index rather than loopin through the list?
+                # Find the right team if it exists already in season results
+                if (seasonteam.club == team.club):
+                    st = seasonteam
+                    break
+            if not st:
+                # no match found, create new TeamSeasonResult:
+                st = TeamSeasonResult(team.club, team.clubfull)
+                seasonteamresults.append(st)
+                
+            st.insertResult(meet, team.score)
         
     return seasonindvs, seasonteams

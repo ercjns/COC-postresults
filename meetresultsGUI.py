@@ -16,12 +16,14 @@ class Application(Frame):
         p = re.compile('^WIOL(\d|c)\.xml$')
         events = [ f for f in os.listdir(path) if p.match(f) != None]
         
+        # TODO: is this working? Feels like GUI is frozen? flush?
         self.status['text'] = 'Processing ' + str(len(events)) + ' results files.'
         
         urls = Oparse.getURLs('ResultURLs.csv')
         meetdata = {}
         
         for file in events:
+            # TODO: use os module to split file names base vs extension
             infile = path + file
             outfileroot = path + file[:-4]
             runners, teams = self._processMeetResults(infile)
@@ -36,14 +38,17 @@ class Application(Frame):
             Oout.writeTeamHTML(teams, meeturls, outfileroot+'-teamresults.html')
             meetdata[file[:-4]] = {'indv': runners, 'teams': teams}
         
-        seasonurls = {}
+        seasonurls = {} # urls['season']  but keys are renamed.
         seasonurls['indv_s'] = urls['season']['indv']
         seasonurls['team_s'] = urls['season']['team']
         seasonurls['full_s'] = urls['season']['ws']
+        
         Sindv, Steam = self._processSeasonResults(meetdata)
         
-        Oout.writeSeasonIndivHTML(Sindv, seasonurls, path+'WIOLseason-INDV.html')
-        # TODO: Oout.writeSeasonTeams(Steam, seasonurls, path...)
+        Oout.writeSeasonIndivHTML(Sindv, seasonurls, path+'WIOLseason-INDV.html', {'WIOL':True})
+        Oout.writeSeasonIndivHTML(Sindv, seasonurls, path+'WinterOseason.html', {'WIOL':False})
+        Oout.writeSeasonTeamsHTML(Steam, seasonurls, path+'WIOLseason-TEAM.html')
+        
         self.status['text'] = 'Done processing results'
         return
 
@@ -58,15 +63,13 @@ class Application(Frame):
             
         teams = Oparse.calcTeams(runners, "COC")
         Oparse.assignTeamPositions(teams, "COC")
+        
         resultrunners = [r for r in runners if r.status != "DidNotStart"]
         return resultrunners, teams
         
     def _processSeasonResults(self, meetdata):
-        #call functions (in parse?) to create season result objects
-        # return the season result objects, they'll be handed to the output functions.
         Sindv, Steam = Oparse.createSeasonResults(meetdata)
-
-        return Sindv, False
+        return Sindv, Steam
 
     def createWidgets(self):
         self.title = Label(self, text="Results Processor")
@@ -233,8 +236,3 @@ nb.add(tab2, text='Constants')
 nb.grid()
 nb.mainloop()
 root.destroy()
-        
-# root = Tk()
-# app = Application(master=root)
-# app.mainloop()
-# root.destroy()
