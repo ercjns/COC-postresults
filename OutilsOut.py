@@ -43,10 +43,25 @@ def _getTopContent(urls={}, opts={}):
         if urls['indv'] != None:
             content += '<p>Go to <a href="' + urls['indv'] + '">Individual Results for this meet</a></p>'
     
+    if opts['pagetype'] in ['WIOLiSeason', 'WIOLtSeason', 'WinterOiSeason']:
+        content += '<h3>Events in the Series</h3>'
+        content += '<strong>Winter O\' #1</strong> Magnuson Park - Nov 7 2015</br>'
+        content += '<strong>Winter O\' #2</strong> North SeaTac Park - Nov 21 2015</br>'
+        content += '<strong>Winter O\' #3</strong> St Edward State Park - Dec 5 2015</br>'
+        content += '<strong>Winter O\' #4</strong> Bridle Trails State Park - Dec 19 2015</br>'
+        content += '<strong>Winter O\' #5</strong> Putney Woods - Jan 9 2015</br>'
+        content += '<strong>Winter O\' #6</strong> Camp River Ranch - Jan 23 2015</br>'
+        content += '<strong>Winter O\' #7</strong> Fire Mountain Scout Reservation - Feb 6 2015</br>'
+
+    
     if opts['pagetype'] in ['WIOLi', 'WIOLiSeason', 'WIOLt', 'WIOLtSeason']:
         content += '<p>Scoring questions? See the <a href="http://cascadeoc.org/sites/default/files/content/WIOL%20Rules%202015-2016.pdf">WIOL Rules</a></p>'
     
-    content += '<p>Jump To: <br /><table>'
+    if opts['pagetype'] in ['WinterOiSeason']:
+        content += '<p>Scoring questions? See the <a href="http://cascadeoc.org/pages/welcome-winter-orienteering-series">Winter O\' Overview</a></p>'
+    
+    if opts['pagetype'] in ['WIOLi', 'WIOLiSeason', 'WIOLt', 'WIOLtSeason']:
+        content += '<p>Jump To: <br /><table>'
     if opts['pagetype'] in ['WIOLi', 'WIOLiSeason']:
         content += '<tr><td class="noborder">Elementary School</td><td class="noborder"><a href="#W1F">Girls</a></td><td class="noborder" colspan="2"><a href="#W1M">Boys</a></td></tr>'
         content += '<tr><td class="noborder">Middle School</td><td class="noborder"><a href="#W2F">Girls</a></td><td class="noborder" colspan="2"><a href="#W2M">Boys</a></td></tr>'
@@ -241,6 +256,8 @@ def writeSeasonIndivHTML(seasonindvs, urls, filename='season-ind.html', opts={'W
         # header content
         if opts['WIOL']:
             fn.write(_getTopContent(urls, {'pagetype':'WIOLiSeason'}))
+        else:
+            fn.write(_getTopContent(urls, {'pagetype':'WinterOiSeason'}))
         
         # results content
         for cclass in sorted(seasonindvs.keys()):
