@@ -272,7 +272,7 @@ def writeSeasonIndivHTML(seasonindvs, urls, filename='season-ind.html', opts={'W
             fn.write('<h3>' + COCclassnames[cclass] + '</h3>')
             fn.write('<table class="fullwidth">\n')
             fn.write('<tr>\n')
-            fn.write('<th>Name</th><th>#1</th><th>#2</th><th>#3</th><th>#4</th><th>#5</th><th>#6</th><th>#7</th><th>Season</th>')
+            fn.write('<th>Place</th><th>Name</th><th>#1</th><th>#2</th><th>#3</th><th>#4</th><th>#5</th><th>#6</th><th>#7</th><th>Season</th>')
             fn.write('</tr>\n')
             
             # TODO order by posoition rather than by points
@@ -280,6 +280,7 @@ def writeSeasonIndivHTML(seasonindvs, urls, filename='season-ind.html', opts={'W
             
             for runner in seasonindvs[cclass]:
                 fn.write('<tr>')
+                fn.write('<td class="fixright xthin">' + str(runner.position) + '</td>')
                 fn.write('<td>' + runner.name + ' (' + runner.club +')' + '</td>')
                 for meet in ['WIOL1', 'WIOL2', 'WIOL3', 'WIOL4', 'WIOL5', 'WIOL6', 'WIOL7']:
                     try:
@@ -316,7 +317,7 @@ def writeSeasonTeamsHTML(seasonteams, urls, filename='season-team.html'):
             fn.write('<h3>' + WIOLteamclassnames[cclass] + '</h3>')
             fn.write('<table class="fullwidth">\n')
             fn.write('<tr>\n')
-            fn.write('<th>School</th><th>#1</th><th>#2</th><th>#3</th><th>#4</th><th>#5</th><th>#6</th><th>#7</th><th>Season</th>')
+            fn.write('<th>Place</th><th>School</th><th>#1</th><th>#2</th><th>#3</th><th>#4</th><th>#5</th><th>#6</th><th>#7</th><th>Season</th>')
             fn.write('</tr>\n')
             
             # TODO order by place rather than by points
@@ -325,6 +326,7 @@ def writeSeasonTeamsHTML(seasonteams, urls, filename='season-team.html'):
             
             for team in seasonteams[cclass]:
                 fn.write('<tr>')
+                fn.write('<td class="fixright xthin">' + str(team.position) + '</td>')
                 fn.write('<td>' + team.clubfull + ' (' + team.club + ')' + '</td>')
                 for meet in ['WIOL1', 'WIOL2', 'WIOL3', 'WIOL4', 'WIOL5', 'WIOL6', 'WIOL7']:
                     try:

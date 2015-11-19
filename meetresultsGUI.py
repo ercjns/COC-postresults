@@ -69,6 +69,8 @@ class Application(Frame):
         
     def _processSeasonResults(self, meetdata):
         Sindv, Steam = Oparse.createSeasonResults(meetdata)
+        Sindv = Oparse.assignSeasonPositions(Sindv)
+        Steam = Oparse.assignSeasonPositions(Steam)
         return Sindv, Steam
 
     def createWidgets(self):
