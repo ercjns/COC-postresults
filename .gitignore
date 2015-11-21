@@ -1,3 +1,6 @@
 *.pyc
 *.bat
 *notes.txt
+*.spec
+/build/*
+/dist/*
