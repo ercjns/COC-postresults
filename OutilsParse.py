@@ -538,15 +538,17 @@ def assignTeamPositions(teams, algo):
         return            
     
 def createSeasonResults(meetdata):
-    # meetdata is a dict, key = 'WIOL1', value dict 'indv' & 'teams' map to list of objects
+    """
+    Create season result objects for individuals and teams
+    
+    Input value is {'WIOL1':{'indiv':[runners],'teams':[teams]}, ... }
+    """
     seasonindvs = {}
     seasonteams = {}
-    
     
     for meet, results in meetdata.items():
         # season individuals:
         for runner in results['indv']:
-            # print 'class', runner.cclass
             recorded = False
             if runner.cclass in ['1','3','7','8G']:
                 continue # skip public classes
@@ -554,7 +556,6 @@ def createSeasonResults(meetdata):
                 continue # skip NC, but MSP, DSQ and DNF get 0s so they stay.
                 
             seasonclass = seasonindvs.setdefault(runner.cclass, [])
-            # print 'individuals in class', seasonclass
             # TODO refactor - ALWAYS inserting a new result
             for seasonperson in seasonclass:
                 if (seasonperson.name == runner.name) and (seasonperson.club == runner.club):
@@ -589,3 +590,60 @@ def createSeasonResults(meetdata):
             st.insertResult(meet, team.score)
         
     return seasonindvs, seasonteams
+    
+    
+def assignSeasonPositions(seasonResults):
+    """
+    assign obj.position for SeasonResult or TeamSeasonResult
+    input is {"cclass":[SeasonResults], "cclass":[SeasonResults], ...}
+    """
+    for cclass, entries in seasonResults.items():
+        entries.sort(key=lambda x: -x.score)
+
+        entries[0].position = 1
+        nextposition = 1
+        
+        for i in range(len(entries)):
+            if i == 0:
+                # First place!
+                entries[i].position = nextposition
+            elif entries[i].score == entries[i-1].score:
+                # break the tie
+                a = entries[i-1]
+                b = entries[i]
+                aScores = sorted(a.scores.values(), key=lambda x: -x)
+                bScores = sorted(b.scores.values(), key=lambda x: -x)
+                races = max(len(aScores), len(bScores))
+                for i in range(races):
+                    try:
+                        tiebreakerA = aScores[i]
+                    except IndexError:
+                        tiebreakerA = 0
+                    try:
+                        tiebreakerB = bScores[i]
+                    except IndexError:
+                        tiebreakerB = 0
+
+                    if tiebreakerA > tiebreakerB:
+                        # a wins, so assign the next position to b
+                        b.position = nextposition
+                        break
+                    elif tiebreakerB > tiebreakerA:
+                        # b wins, so take a's position and assign a the next position
+                        b.position = a.position
+                        a.position = nextposition
+                        break
+                    else:
+                        continue     
+                if b.position == None:
+                    # actually a tie
+                    b.position = a.position   
+            else:
+                # assign the next position...
+                entries[i].position = nextposition
+                
+            nextposition += 1 # always increment so ties skip the next place.
+
+    return seasonResults
+    
+    
