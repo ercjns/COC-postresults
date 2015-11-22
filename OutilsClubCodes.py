@@ -9,8 +9,9 @@ class ClubCodes(object):
                 self.codes[club] = clubfull.strip()
     
     def getClubFull(self, clubshort):
-        
-        return self.codes.setdefault(clubshort, 'unknown')
+        if clubshort == None:
+            return 'None'
+        return self.codes.setdefault(clubshort, clubshort + ' (not recognized)')
         
         
 if __name__ == '__main__':

@@ -138,6 +138,8 @@ def writeIndividualHTML(runners, urls, filename="results-individuals.html", opts
                 fn.write('<th>Points</th>\n')
             fn.write('</tr>\n')
 
+            # how do we guarantee these are sorted correctly. Not all finishers have a position.
+            
             for r in runners:
                 if r.cclass == c:
                     if r.status == 'OK':
@@ -278,7 +280,11 @@ def writeSeasonIndivHTML(seasonindvs, urls, filename='season-ind.html', opts={'W
             # TODO order by posoition rather than by points
             # TODO order runners by points
             
+            seasonindvs[cclass].sort(key= lambda x: x.position)
+            
             for runner in seasonindvs[cclass]:
+            
+                runner.club = runner.club or 'None'
                 fn.write('<tr>')
                 fn.write('<td class="fixright xthin">' + str(runner.position) + '</td>')
                 fn.write('<td>' + runner.name + ' (' + runner.club +')' + '</td>')
@@ -320,9 +326,7 @@ def writeSeasonTeamsHTML(seasonteams, urls, filename='season-team.html'):
             fn.write('<th>Place</th><th>School</th><th>#1</th><th>#2</th><th>#3</th><th>#4</th><th>#5</th><th>#6</th><th>#7</th><th>Season</th>')
             fn.write('</tr>\n')
             
-            # TODO order by place rather than by points
-            # TODO order teams by points
-            seasonteams[cclass].sort(key=lambda x: -x.score)
+            seasonteams[cclass].sort(key=lambda x: x.position)
             
             for team in seasonteams[cclass]:
                 fn.write('<tr>')
