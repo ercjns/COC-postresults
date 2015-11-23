@@ -27,6 +27,7 @@ class Runner(object):
             self.clubfull = info['clubfull']
             self.cclass = info['cclass']
             self.course = info['course']
+            self.bib = info['bib']
         if (result):
             self.finish = result['finish']
             self.mmmss = result['mmmss']
@@ -56,8 +57,9 @@ class SeasonResult(object):
     """
     Represents a result for an individual over the season.
     """
-    def __init__(self, name, club, clubfull):
+    def __init__(self, name, bib, club, clubfull):
         self.name = name
+        self.bib = bib
         self.club = club
         self.clubfull = clubfull
         self.scores = {}
@@ -78,7 +80,7 @@ class SeasonResult(object):
         return
     
     # verb: insert
-    def addResult(self, meet, score):
+    def insertResult(self, meet, score):
         self.scores[meet] = score
         self._calcSeasonScore()
         return
@@ -303,6 +305,18 @@ def getSIIDFromSoup(PR, iofV):
     else:
         raise ValueError("Invalid iofVersion")
     return estick
+    
+def getBibFromSoup(PR, iofV):
+    if iofV == 2:
+        bib = None
+    elif iofV == 3:
+        try:
+            bib = PR.Result.BibNumber.string
+        except:
+            bib = None
+    else:
+        raise ValueError("Invalid iofVersion")
+    return bib
 
 
 def getRunners(file):
@@ -332,11 +346,13 @@ def getRunners(file):
             estick = getSIIDFromSoup(PR, iofV)
             start = getStartFromSoup(PR, iofV)
             club = getClubFromSoup(PR, iofV)
+            bib = getBibFromSoup(PR, iofV) if cclass[0] == 'W' else None
             info = {"name": getNameFromSoup(PR, iofV),
                     "club": club,
                     "clubfull": clubdict.getClubFull(club),
                     "cclass": cclass,
-                    "course": course
+                    "course": course, 
+                    "bib": bib
                     }
             if iofV == 2:
                 mmmss = getMMMSSFromSoup(PR, iofV)
@@ -557,22 +573,39 @@ def createSeasonResults(meetdata):
                 
             seasonclass = seasonindvs.setdefault(runner.cclass, [])
             # TODO refactor - ALWAYS inserting a new result
+            sp = None
             for seasonperson in seasonclass:
-                if (seasonperson.name == runner.name) and (seasonperson.club == runner.club):
-                    # match, add to results
-                    seasonperson.addResult(meet, runner.score)
-                    recorded = True
-                    break
-            if not recorded:
-                # no match found, add a new season result in the class for this runner.
-                sp = SeasonResult(runner.name, runner.club, runner.clubfull)
-                sp.addResult(meet, runner.score)
+                if runner.bib: #for WIOL match on bib
+                    if seasonperson.bib == runner.bib:
+                        sp = seasonperson
+                        break
+                else: #for public match on name, bibs exist but are not consistent.
+                    if seasonperson.name == runner.name:
+                        sp = seasonperson
+                        break
+            if not sp:
+                # no match, create a new SeasonResult
+                sp = SeasonResult(runner.name, runner.bib, runner.club, runner.clubfull)
                 seasonclass.append(sp)
-                recorded = True # this is not needed?
+            
+            sp.insertResult(meet, runner.score)
+                        
+            # for seasonperson in seasonclass:
+                # if (seasonperson.name == runner.name) and (seasonperson.club == runner.club):
+                    # # match, add to results
+                    # seasonperson.addResult(meet, runner.score)
+                    # recorded = True
+                    # break
+            # if not recorded:
+                # # no match found, add a new season result in the class for this runner.
+                # sp = SeasonResult(runner.name, runner.bib, runner.club, runner.clubfull)
+                # sp.addResult(meet, runner.score)
+                # seasonclass.append(sp)
+                # recorded = True # this is not needed?
         
         # season teams
         for team in results['teams']:
-            recorded = False
+            # recorded = False
             seasonteamresults = seasonteams.setdefault(team.cclass, []) #this is a table in the results output
             
             st = None
