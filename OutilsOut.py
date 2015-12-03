@@ -174,7 +174,8 @@ def writeIndividualHTML(runners, urls, filename="results-individuals.html", opts
                             fn.write('<td class="fixright thin">' + str(r.score) + '</td>\n')
                         fn.write('</tr>\n')
                         
-            fn.write('</table>\n\n')
+            fn.write('</table>\n')
+            fn.write('</div>\n\n')
     return
 
 
