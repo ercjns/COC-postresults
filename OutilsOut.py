@@ -127,15 +127,15 @@ def writeIndividualHTML(runners, urls, filename="results-individuals.html", opts
             fn.write('<h3>' + COCclassnames[c] + "</h3>\n")
             fn.write('<table class="fullwidth">\n')
             fn.write('<tr>\n')
-            fn.write('<th>Place</th>\n')
+            fn.write('<th class="right">Place</th>\n')
             fn.write('<th>Name</th>\n')
             if school:
                 fn.write('<th>School</th>\n')
             else:
                 fn.write('<th>Club</th>\n')
-            fn.write('<th>Result</th>\n')
+            fn.write('<th class="right">Result</th>\n')
             if points:
-                fn.write('<th>Points</th>\n')
+                fn.write('<th class="right">Points</th>\n')
             fn.write('</tr>\n')
 
             # how do we guarantee these are sorted correctly. Not all finishers have a position.
@@ -206,7 +206,7 @@ def writeTeamHTML(teams, urls, filename="results-teams.html"):
             fn.write('<button onclick="toggleTeamDetails(\''  + c + '\')">Toggle details</button>' + '</h3>\n')
             fn.write('<table class="fullwidth">\n')
             fn.write('<tr>\n')
-            fn.write('<th>Place</th>\n<th>Points</th>\n<th>School / Name</th>\n<th>Finish %</th>\n')
+            fn.write('<th class="right">Place</th>\n<th class="right">Points</th>\n<th>School / Name</th>\n<th>Finish %</th>\n')
             fn.write('</tr>\n')
 
             cteams = [t for t in teams if t.cclass == c]
@@ -275,7 +275,7 @@ def writeSeasonIndivHTML(seasonindvs, urls, filename='season-ind.html', opts={'W
             fn.write('<h3>' + COCclassnames[cclass] + '</h3>')
             fn.write('<table class="fullwidth">\n')
             fn.write('<tr>\n')
-            fn.write('<th>Place</th><th>Name</th><th>#1</th><th>#2</th><th>#3</th><th>#4</th><th>#5</th><th>#6</th><th>#7</th><th>Season</th>')
+            fn.write('<th class="right">Place</th><th>Name</th><th>#1</th><th>#2</th><th>#3</th><th>#4</th><th>#5</th><th>#6</th><th>#7</th><th>Season</th>')
             fn.write('</tr>\n')
             
             # TODO order by posoition rather than by points
@@ -324,7 +324,7 @@ def writeSeasonTeamsHTML(seasonteams, urls, filename='season-team.html'):
             fn.write('<h3>' + WIOLteamclassnames[cclass] + '</h3>')
             fn.write('<table class="fullwidth">\n')
             fn.write('<tr>\n')
-            fn.write('<th>Place</th><th>School</th><th>#1</th><th>#2</th><th>#3</th><th>#4</th><th>#5</th><th>#6</th><th>#7</th><th>Season</th>')
+            fn.write('<th class="right">Place</th><th>School</th><th>#1</th><th>#2</th><th>#3</th><th>#4</th><th>#5</th><th>#6</th><th>#7</th><th>Season</th>')
             fn.write('</tr>\n')
             
             seasonteams[cclass].sort(key=lambda x: x.position)

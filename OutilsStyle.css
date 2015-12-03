@@ -19,6 +19,9 @@ td {
 	border: 1px solid #CCC;
 	padding: 2px 8px;
 }
+th.right {
+	text-align: right;
+}
 td.team {
 	padding-top: 10px;
 	border-style: none none solid none;
