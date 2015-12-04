@@ -124,7 +124,10 @@ def writeIndividualHTML(runners, urls, filename="results-individuals.html", opts
             
             fn.write('<div class="classResults" id="' + c + '">\n')
             fn.write('<a name="' + c + '"></a>\n')
-            fn.write('<h3>' + COCclassnames[c] + "</h3>\n")
+            fn.write('<h3>' + COCclassnames[c] + "</h3>")
+            if school and (c not in ['W1M', 'W1F']):
+                teamclass = c if c not in ['W2F', 'W2M'] else 'W2'
+                fn.write(' | <a href="' + urls['team'] +'#'+teamclass + '">go to team results</a>')
             fn.write('<table class="fullwidth">\n')
             fn.write('<tr>\n')
             fn.write('<th class="right">Place</th>\n')
@@ -202,8 +205,10 @@ def writeTeamHTML(teams, urls, filename="results-teams.html"):
         for c in WIOLcclasses:
             fn.write('<div class="classResults" id="' + c + '">\n')
             fn.write('<a name="' + c + '"></a>\n')
-            fn.write('<h3>' + WIOLteamclassnames[c] + ' | ')
-            fn.write('<button onclick="toggleTeamDetails(\''  + c + '\')">Toggle details</button>' + '</h3>\n')
+            fn.write('<h3>' + WIOLteamclassnames[c] +'</h3>')
+            fn.write(' | <a href="javascript:toggleTeamDetails(\''  + c + '\')">toggle details</a>')
+            indvclass = c if c not in ['W2'] else 'W2F'
+            fn.write(' | <a href="' + urls['indv'] + '#' + indvclass + '">individual results</a>')
             fn.write('<table class="fullwidth">\n')
             fn.write('<tr>\n')
             fn.write('<th class="right">Place</th>\n<th class="right">Points</th>\n<th>School / Name</th>\n<th>Finish %</th>\n')
