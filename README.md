@@ -2,6 +2,7 @@
 Python utility to create results content ready for posting at cascadeoc.org as part of the WIOL and Winter O season.
 
 ## Start the GUI
+There is currently a dependency on lxml. Follow instructions [here](http://lxml.de/installation.html) to install on your system. Other requirements should be successfully installed via pip.
 Nothing special if python is installed. From the repository, run ```python .\meetresultsGUI.py```
 
 If python is not installed, keep reading.
