@@ -44,18 +44,22 @@ def _getTopContent(urls={}, opts={}):
             content += '<p>Go to <a href="' + urls['indv'] + '">Individual Results for this meet</a></p>'
     
     if opts['pagetype'] in ['WIOLiSeason', 'WIOLtSeason', 'WinterOiSeason']:
-        content += '<h3>Events in the Series</h3>'
-        content += '<strong>Winter O\' #1</strong> Magnuson Park - Nov 7 2015</br>'
-        content += '<strong>Winter O\' #2</strong> North SeaTac Park - Nov 21 2015</br>'
-        content += '<strong>Winter O\' #3</strong> St Edward State Park - Dec 5 2015</br>'
-        content += '<strong>Winter O\' #4</strong> Bridle Trails State Park - Dec 19 2015</br>'
-        content += '<strong>Winter O\' #5</strong> Putney Woods - Jan 9 2015</br>'
-        content += '<strong>Winter O\' #6</strong> Camp River Ranch - Jan 23 2015</br>'
-        content += '<strong>Winter O\' #7</strong> Fire Mountain Scout Reservation - Feb 6 2015</br>'
+        content += '<h3>Events in the Series</h3><br />\n'
+        content += '<strong>Winter O\' #1</strong> Magnuson Park - Nov 7 2015 (<a href="http://www.cascadeoc.org/results/2015/winter-o-serieswiol-1">results</a>)<br />\n'
+        content += '<strong>Winter O\' #2</strong> North SeaTac Park - Nov 21 2015 (<a href="http://www.cascadeoc.org/results/2015/winter-o-serieswiol-2">results</a>)<br />\n'
+        content += '<strong>Winter O\' #3</strong> St Edward State Park - Dec 5 2015 (<a href="http://www.cascadeoc.org/results/2015/winter-o-serieswiol-3">results</a>)<br />\n'
+        content += '<strong>Winter O\' #4</strong> Bridle Trails State Park - Dec 19 2015 (<a href="http://www.cascadeoc.org/results/2015/winter-o-serieswiol-4">results</a>)<br />\n'
+        content += '<strong>Winter O\' #5</strong> Putney Woods - Jan 9 2016 (<a href="http://www.cascadeoc.org/results/2016/winter-o-serieswiol-5">results</a>)<br />\n'
+        content += '<strong>Winter O\' #6</strong> Camp River Ranch - Jan 23 2016 (<a href="http://www.cascadeoc.org/results/2016/winter-o-serieswiol-6">results</a>)<br />\n'
+        content += '<strong>Winter O\' #7</strong> Fire Mountain Scout Reservation - Feb 6 2016 (<a href="http://cascadeoc.org/results/2016/winter-o-series-wiol-7">results</a>)<br />\n'
+        
+    if opts['pagetype'] in ['WinterOiSeason']:
+        content += '<p>Last updated: February 6, 2016\n'
+        content += 'For corrections contact <a href="http://www.cascadeoc.org/users/eric-jones/contact">Eric Jones</a> </p>\n'
 
     
     if opts['pagetype'] in ['WIOLi', 'WIOLiSeason', 'WIOLt', 'WIOLtSeason']:
-        content += '<p>Scoring questions? See the <a href="http://cascadeoc.org/sites/default/files/content/WIOL%20Rules%202015-2016.pdf">WIOL Rules</a></p>'
+        content += '<p>Scoring questions? See the <a href="http://cascadeoc.org/sites/default/files/content/WIOL%20Rules%202015-2016.pdf">WIOL Rules</a>.</p>'
     
     if opts['pagetype'] in ['WinterOiSeason']:
         content += '<p>Scoring questions? See the <a href="http://cascadeoc.org/pages/welcome-winter-orienteering-series">Winter O\' Overview</a></p>'
@@ -125,7 +129,7 @@ def writeIndividualHTML(runners, urls, filename="results-individuals.html", opts
             fn.write('<div class="classResults" id="' + c + '">\n')
             fn.write('<a name="' + c + '"></a>\n')
             fn.write('<h3>' + COCclassnames[c] + "</h3>")
-            if school and (c not in ['W1M', 'W1F']):
+            if (school == True) and (c not in ['W1M', 'W1F']):
                 teamclass = c if c not in ['W2F', 'W2M'] else 'W2'
                 fn.write(' | <a href="' + urls['team'] +'#'+teamclass + '">go to team results</a>')
             fn.write('<table class="fullwidth">\n')

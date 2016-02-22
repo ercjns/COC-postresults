@@ -515,13 +515,13 @@ def assignTeamPositions(teams, algo):
                     # make sure they're in order...
                     a.scorers.sort(key=lambda x: -x.score)
                     b.scorers.sort(key=lambda x: -x.score)
-                    for i in range(3):
+                    for j in range(3):
                         try:
-                            tiebreakerA = a.scorers[i].score
+                            tiebreakerA = a.scorers[j].score
                         except IndexError:
                             tiebreakerA = 0
                         try:
-                            tiebreakerB = b.scorers[i].score
+                            tiebreakerB = b.scorers[j].score
                         except IndexError:
                             tiebreakerB = 0
 
